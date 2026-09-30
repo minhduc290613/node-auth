@@ -1,7 +1,7 @@
 # NodeAuth Portal
 
 <p align="center">
-  <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80" alt="NodeAuth Banner" width="100%" style="border-radius: 10px; max-height: 320px; object-fit: cover;" />
+  <img src="https://photos.fife.usercontent.google.com/pw/AP1GczOcS6HnH-XgWSq2zcKFOLBAyIyUpQDhZ7wRkzTkjaiosRtLqRnqQGwg=w2229-h1291-s-no-gm?authuser=0?auto=format&fit=crop&w=1200&q=80" alt="NodeAuth Banner" width="100%" style="border-radius: 10px; max-height: 320px; object-fit: cover;" />
 </p>
 
 <p align="center">
