@@ -309,6 +309,6 @@ Visit the application at: **[http://localhost:3000](http://localhost:3000)**
 ---
 
 
-## Giấy Phép (License)
+## License
 
-Dự án được phát hành theo giấy phép [MIT](LICENSE). Tự do sử dụng, chỉnh sửa và phân phối cho mục đích cá nhân hoặc thương mại.
+This code licensed under the [MIT](LICENSE) license.
