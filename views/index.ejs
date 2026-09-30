@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= config.title %></title>
+    <link rel="icon" type="image/x-icon" href="<%= config.favicon %>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/bundle.css">
+</head>
+<body <%- config.background ? `style="background: ${config.background};"` : '' %>>
+
+    <!-- Ambient Glowing Orbs for dynamic lighting effect -->
+    <div class="ambient-glow orb-1"></div>
+    <div class="ambient-glow orb-2"></div>
+    <div class="ambient-glow orb-3"></div>
+
+    <div class="split-container d-flex align-items-center justify-content-center p-3 p-lg-5">
+        <div class="container-fluid max-w-7xl">
+            <div class="row g-4 align-items-center justify-content-center">
+                
+                <!-- CỘT BÊN TRÁI: BANNER -->
+                <div class="col-lg-6 col-xl-7 text-white p-4 p-lg-5 left-banner rounded-4 d-none d-lg-block">
+                    <div class="banner-content">
+                        <span class="banner-badge px-3 py-2 rounded-pill fw-semibold mb-3">
+                            <span class="badge-dot"></span>
+                            <%= config.banner.badge %>
+                        </span>
+                        <h1 class="display-5 fw-bold mb-3 banner-title"><%= config.banner.title %></h1>
+                        <p class="lead mb-4 banner-subtitle text-white-50"><%= config.banner.subtitle %></p>
+                        
+                        <% if (config.banner.image) { %>
+                            <div class="banner-img-wrapper mb-4">
+                                <img src="<%= config.banner.image %>" alt="Banner" class="banner-img">
+                            </div>
+                        <% } %>
+
+                        <ul class="list-unstyled d-flex flex-column gap-2 text-white-50 feature-list">
+                            <% config.banner.features.forEach((feature, index) => { %>
+                                <li class="feature-item d-flex align-items-center gap-3" style="--item-index: <%= index %>;">
+                                    <i class="fa-solid fa-circle-check text-primary fs-5"></i>
+                                    <span><%= feature %></span>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- CỘT BÊN PHẢI: LOGIN / REGISTER / FORGOT PASSWORD -->
+                <div class="col-12 col-lg-6 col-xl-5 d-flex justify-content-center">
+                    <div class="right-form-wrapper p-4 p-sm-5 shadow-lg position-relative" id="authCard">
+                        
+                        <!-- Loading Overlay -->
+                        <div id="loading" class="loading-overlay">
+                            <div class="custom-spinner"></div>
+                            <span class="small text-muted fw-semibold mt-2">Đang xử lý...</span>
+                        </div>
+
+                        <!-- Alert Box -->
+                        <div id="alertBox" class="alert d-none" role="alert"></div>
+
+                        <!-- Card Header -->
+                        <div class="text-center mb-4 card-header-box">
+                            <h3 class="fw-bold text-gradient" id="formHeaderTitle">Xin Chào!</h3>
+                            <p class="text-muted small" id="formHeaderSubtitle">Vui lòng đăng nhập để tiếp tục</p>
+                        </div>
+
+                        <!-- Navigation Tabs -->
+                        <ul class="nav nav-pills nav-justified mb-4" id="authTabs">
+                            <li class="nav-item">
+                                <button class="nav-link active fw-bold" id="tab-login" onclick="switchView('login')">
+                                    <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Đăng nhập
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link fw-bold" id="tab-register" onclick="switchView('register')">
+                                    <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
+                                </button>
+                            </li>
+                        </ul>
+
+                        <!-- Form Container with Smooth Transitions -->
+                        <div class="form-container-slider position-relative">
+                            
+                            <!-- Form Đăng nhập -->
+                            <form id="loginForm" class="auth-form active-form">
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="loginEmail" placeholder="Email" required autocomplete="username">
+                                    <label for="loginEmail"><i class="fa-regular fa-envelope me-1 text-muted"></i> Địa chỉ Email</label>
+                                </div>
+                                <div class="form-floating mb-3 password-field-group">
+                                    <input type="password" class="form-control" id="loginPassword" placeholder="Mật khẩu" required autocomplete="current-password">
+                                    <label for="loginPassword"><i class="fa-solid fa-lock me-1 text-muted"></i> Mật khẩu</label>
+                                    <button type="button" class="btn toggle-password-btn" data-target="loginPassword" title="Hiện/ẩn mật khẩu">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                                        <label class="form-check-label small text-muted user-select-none" for="rememberMe">
+                                            Ghi nhớ đăng nhập
+                                        </label>
+                                    </div>
+                                    <a href="#" class="text-decoration-none small text-primary fw-semibold link-hover-slide" onclick="switchView('forgot')">Quên mật khẩu?</a>
+                                </div>
+                                <button type="submit" class="btn btn-gradient-primary w-100 py-2.5 fw-bold rounded-3 ripple-btn">
+                                    <span>Đăng Nhập</span>
+                                    <i class="fa-solid fa-arrow-right ms-2 btn-icon-arrow"></i>
+                                </button>
+                            </form>
+
+                            <!-- Form Đăng ký -->
+                            <form id="registerForm" class="auth-form form-hidden">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="regName" placeholder="Họ tên" required autocomplete="name">
+                                    <label for="regName"><i class="fa-regular fa-user me-1 text-muted"></i> Họ và Tên</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="regEmail" placeholder="Email" required autocomplete="email">
+                                    <label for="regEmail"><i class="fa-regular fa-envelope me-1 text-muted"></i> Địa chỉ Email</label>
+                                </div>
+                                <div class="form-floating mb-4 password-field-group">
+                                    <input type="password" class="form-control" id="regPassword" placeholder="Mật khẩu" required minlength="6" autocomplete="new-password">
+                                    <label for="regPassword"><i class="fa-solid fa-lock me-1 text-muted"></i> Mật khẩu (tối thiểu 6 ký tự)</label>
+                                    <button type="button" class="btn toggle-password-btn" data-target="regPassword" title="Hiện/ẩn mật khẩu">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                                <button type="submit" class="btn btn-gradient-success w-100 py-2.5 fw-bold rounded-3 ripple-btn">
+                                    <span>Tạo Tài Khoản</span>
+                                    <i class="fa-solid fa-check ms-2 btn-icon-arrow"></i>
+                                </button>
+                            </form>
+
+                            <!-- Form Quên Mật Khẩu -->
+                            <form id="forgotForm" class="auth-form form-hidden">
+                                <p class="text-muted text-center small mb-4">Nhập email đã đăng ký để nhận liên kết khôi phục mật khẩu bảo mật.</p>
+                                <div class="form-floating mb-4">
+                                    <input type="email" class="form-control" id="forgotEmail" placeholder="Email" required autocomplete="email">
+                                    <label for="forgotEmail"><i class="fa-regular fa-envelope me-1 text-muted"></i> Email khôi phục</label>
+                                </div>
+                                <button type="submit" class="btn btn-gradient-warning w-100 py-2.5 fw-bold text-white mb-3 rounded-3 ripple-btn">
+                                    <span>Gửi Email Khôi Phục</span>
+                                    <i class="fa-regular fa-paper-plane ms-2 btn-icon-arrow"></i>
+                                </button>
+                                <div class="text-center">
+                                    <a href="#" class="text-decoration-none small text-muted back-link d-inline-flex align-items-center gap-1" onclick="switchView('login')">
+                                        <i class="fa-solid fa-arrow-left"></i>
+                                        <span>Quay lại đăng nhập</span>
+                                    </a>
+                                </div>
+                            </form>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/bundle.js"></script>
+</body>
+</html>

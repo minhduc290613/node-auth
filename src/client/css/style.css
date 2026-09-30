@@ -1,0 +1,684 @@
+/* ==========================================================================
+   NODEAUTH MODERN ANIMATIONS & DESIGN SYSTEM
+   Ultra-smooth transitions, GPU-accelerated motion & Glassmorphism
+   ========================================================================== */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+  --primary-gradient-hover: linear-gradient(135deg, #1d4ed8 0%, #4338ca 50%, #6d28d9 100%);
+  --success-gradient: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  --warning-gradient: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  --primary-glow: rgba(99, 102, 241, 0.35);
+  
+  --card-bg: rgba(255, 255, 255, 0.94);
+  --card-border: rgba(255, 255, 255, 0.6);
+  --banner-bg: rgba(15, 23, 42, 0.65);
+  --banner-border: rgba(255, 255, 255, 0.12);
+
+  /* Silky smooth motion curves */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  position: relative;
+  overflow-x: hidden;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   1. AMBIENT GLOWING ORBS (Dynamic Background Lighting)
+   ========================================================================== */
+
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.orb-1 {
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.55) 0%, rgba(37, 99, 235, 0.2) 65%, transparent 100%);
+  top: -120px;
+  left: -120px;
+  animation: floatOrb1 22s ease-in-out infinite alternate;
+}
+
+.orb-2 {
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(236, 72, 153, 0.2) 60%, transparent 100%);
+  bottom: -150px;
+  right: -100px;
+  animation: floatOrb2 26s ease-in-out infinite alternate;
+}
+
+.orb-3 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.4) 0%, rgba(99, 102, 241, 0.15) 70%, transparent 100%);
+  top: 35%;
+  left: 40%;
+  animation: floatOrb3 20s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(60px, 40px) scale(1.1); }
+  100% { transform: translate(-40px, 70px) scale(0.92); }
+}
+
+@keyframes floatOrb2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-70px, -50px) scale(1.12); }
+  100% { transform: translate(40px, -30px) scale(0.95); }
+}
+
+@keyframes floatOrb3 {
+  0%   { transform: translate(0, 0) scale(0.9); }
+  50%  { transform: translate(50px, -40px) scale(1.15); }
+  100% { transform: translate(-30px, 30px) scale(1); }
+}
+
+/* ==========================================================================
+   2. MAIN LAYOUT
+   ========================================================================== */
+
+.split-container {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   3. LEFT BANNER ANIMATIONS & GLASSMORPHISM
+   ========================================================================== */
+
+.left-banner {
+  background: var(--banner-bg);
+  backdrop-filter: blur(24px) saturate(170%);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  border: 1px solid var(--banner-border);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  animation: bannerEntrance 0.9s var(--ease-spring) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.left-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+@keyframes bannerEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Banner Badge with Shimmer & Pulse */
+.banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(59, 130, 246, 0.16);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #93c5fd;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.banner-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+  border-color: rgba(147, 197, 253, 0.7);
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  background: #38bdf8;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #38bdf8;
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50%      { transform: scale(1.4); opacity: 1; }
+}
+
+.banner-title {
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.5px;
+}
+
+/* Banner Image with Ambient Reflection Glow */
+.banner-img-wrapper {
+  position: relative;
+  border-radius: 20px;
+  perspective: 1000px;
+}
+
+.banner-img-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  background: inherit;
+  filter: blur(28px);
+  opacity: 0.5;
+  z-index: -1;
+  transform: translateY(14px) scale(0.94);
+  border-radius: 20px;
+  transition: all 0.5s var(--ease-spring);
+}
+
+.banner-img {
+  width: 100%;
+  max-height: 270px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.6s var(--ease-spring), box-shadow 0.6s var(--ease-spring);
+  animation: subtleFloat 7s ease-in-out infinite alternate;
+}
+
+.banner-img-wrapper:hover .banner-img {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 0 35px 55px -15px rgba(0, 0, 0, 0.7);
+}
+
+@keyframes subtleFloat {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+/* Feature List Items with Staggered Entrance */
+.feature-item {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s var(--ease-spring);
+  animation: featureSlideIn 0.6s var(--ease-spring) both;
+  animation-delay: calc(0.3s + (var(--item-index, 0) * 0.12s));
+}
+
+@keyframes featureSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.feature-item:hover {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(96, 165, 250, 0.35);
+  transform: translateX(8px);
+  color: #ffffff !important;
+}
+
+.feature-item i {
+  transition: transform 0.3s var(--ease-bounce), color 0.3s;
+}
+
+.feature-item:hover i {
+  transform: scale(1.3) rotate(8deg);
+  color: #60a5fa !important;
+}
+
+/* ==========================================================================
+   4. RIGHT LOGIN CARD (Glassmorphism Supreme)
+   ========================================================================== */
+
+.right-form-wrapper {
+  background: var(--card-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  max-width: 480px;
+  width: 100%;
+  border-radius: 28px;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35),
+              0 0 0 1px rgba(255, 255, 255, 0.6),
+              inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  position: relative;
+  overflow: hidden;
+  animation: cardEntrance 0.8s var(--ease-spring) both;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Glowing Top Accent Line */
+.right-form-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 3px;
+  background: var(--primary-gradient);
+  border-radius: 3px;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.9);
+}
+
+/* Animated Gradient Header */
+.text-gradient {
+  background: linear-gradient(135deg, #1d4ed8 0%, #4f46e5 50%, #9333ea 100%);
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 6s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ==========================================================================
+   5. NAVIGATION PILLS (Tab Switcher)
+   ========================================================================== */
+
+.nav-pills {
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 16px;
+  position: relative;
+  gap: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.nav-pills .nav-link {
+  color: #64748b;
+  border-radius: 12px;
+  padding: 9px 16px;
+  font-size: 0.92rem;
+  transition: all 0.3s var(--ease-spring);
+  position: relative;
+  border: none;
+}
+
+.nav-pills .nav-link.active {
+  background: #ffffff;
+  color: #1e293b;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-weight: 700;
+  transform: translateY(-1px);
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* ==========================================================================
+   6. FORM TRANSITIONS & SLIDER
+   ========================================================================== */
+
+.form-container-slider {
+  position: relative;
+  min-height: 290px;
+}
+
+.auth-form {
+  transition: opacity 0.35s var(--ease-spring), transform 0.35s var(--ease-spring);
+  will-change: opacity, transform;
+}
+
+.auth-form.form-hidden {
+  display: none;
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+}
+
+.auth-form.form-exit {
+  opacity: 0;
+  transform: translateY(-14px) scale(0.97);
+}
+
+.auth-form.active-form {
+  display: block;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  animation: formSlideIn 0.35s var(--ease-spring) both;
+}
+
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   7. FORM CONTROLS & FLOATING INPUTS
+   ========================================================================== */
+
+.form-floating > .form-control {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+  padding-left: 14px;
+  transition: border-color 0.25s var(--ease-spring),
+              box-shadow 0.25s var(--ease-spring),
+              background 0.25s var(--ease-spring),
+              transform 0.25s var(--ease-spring);
+}
+
+.form-floating > .form-control:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
+.form-floating > .form-control:focus {
+  background: #ffffff;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18), 0 6px 18px -4px rgba(99, 102, 241, 0.15);
+  transform: translateY(-1px);
+}
+
+.form-floating > label {
+  padding-left: 14px;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.form-floating > .form-control:focus ~ label {
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+/* Password Group & Toggle Button */
+.password-field-group {
+  position: relative;
+}
+
+.password-field-group .form-control {
+  padding-right: 48px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  border: none;
+  background: transparent;
+  padding: 6px;
+  font-size: 1.1rem;
+  z-index: 10;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: color 0.2s, transform 0.2s var(--ease-bounce);
+}
+
+.toggle-password-btn:hover {
+  color: #4f46e5;
+  transform: translateY(-50%) scale(1.2);
+}
+
+.toggle-password-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Custom Checkbox */
+.form-check-input {
+  cursor: pointer;
+  transition: all 0.2s var(--ease-spring);
+}
+
+.form-check-input:checked {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+/* Links */
+.link-hover-slide {
+  position: relative;
+  transition: color 0.2s;
+}
+
+.link-hover-slide:hover {
+  color: #4338ca !important;
+}
+
+.back-link {
+  transition: all 0.25s var(--ease-spring);
+}
+
+.back-link:hover {
+  color: #4f46e5 !important;
+  transform: translateX(-4px);
+}
+
+/* ==========================================================================
+   8. BUTTONS ("CHOÁY" GLOW & SHIMMER)
+   ========================================================================== */
+
+.btn-gradient-primary {
+  background: var(--primary-gradient);
+  background-size: 200% auto;
+  border: none;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s var(--ease-spring);
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.42), 0 8px 12px -6px rgba(79, 70, 229, 0.25);
+}
+
+.btn-gradient-primary:hover {
+  background-position: right center;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 16px 32px -6px rgba(79, 70, 229, 0.55), 0 8px 16px -6px rgba(79, 70, 229, 0.3);
+  color: #ffffff;
+}
+
+.btn-gradient-primary:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-gradient-success {
+  background: var(--success-gradient);
+  background-size: 200% auto;
+  border: none;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s var(--ease-spring);
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.42);
+}
+
+.btn-gradient-success:hover {
+  background-position: right center;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 16px 32px -6px rgba(16, 185, 129, 0.55);
+  color: #ffffff;
+}
+
+.btn-gradient-success:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-gradient-warning {
+  background: var(--warning-gradient);
+  background-size: 200% auto;
+  border: none;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s var(--ease-spring);
+  box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.42);
+}
+
+.btn-gradient-warning:hover {
+  background-position: right center;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 16px 32px -6px rgba(245, 158, 11, 0.55);
+  color: #ffffff;
+}
+
+.btn-gradient-warning:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Shimmer Light Beam Effect across Buttons */
+.ripple-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -70%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: rotate(25deg);
+  transition: all 0.75s ease;
+}
+
+.ripple-btn:hover::after {
+  left: 130%;
+}
+
+/* Button Arrow Micro-movement */
+.btn-icon-arrow {
+  display: inline-block;
+  transition: transform 0.25s var(--ease-bounce);
+}
+
+.ripple-btn:hover .btn-icon-arrow {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   9. LOADING OVERLAY & ALERTS
+   ========================================================================== */
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  border-radius: 28px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-spring);
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.custom-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#alertBox {
+  border-radius: 14px;
+  font-size: 0.9rem;
+  border: none;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: alertSlideDown 0.4s var(--ease-bounce) both;
+}
+
+@keyframes alertSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   10. RESPONSIVE OPTIMIZATION
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+  .right-form-wrapper {
+    max-width: 460px;
+    padding: 2rem !important;
+  }
+  .orb-1, .orb-2 {
+    width: 320px;
+    height: 320px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
