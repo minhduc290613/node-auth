@@ -1,12 +1,16 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/authMiddleware.js';
-import { siteConfig } from '../config/site.js'; // Import file cấu hình
+import { siteConfig } from '../config/site.js';
 
 const router = Router();
 
 router.get('/', (req, res) => {
   if (req.cookies.sb_access_token) return res.redirect('/dashboard');
-  res.render('index', { config: siteConfig }); // Truyền config sang View
+  res.render('index', { config: siteConfig });
+});
+
+router.get('/reset-password', (req, res) => {
+  res.render('reset-password', { config: siteConfig });
 });
 
 router.get('/dashboard', requireAuth, (req, res) => {
