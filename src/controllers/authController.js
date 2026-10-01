@@ -18,8 +18,9 @@ export const login = async (req, res) => {
 
   res.cookie('sb_access_token', data.session.access_token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 86400000
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000
   });
 
   return res.json({ success: true, message: 'Đăng nhập thành công!' });
@@ -27,11 +28,27 @@ export const login = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
+
+  // Tự động lấy domain từ request hoặc dùng biến môi trường APP_URL
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+  const host = req.get('host');
+  const redirectUrl = `${protocol}://${host}/reset-password`;
+
+  console.log('Redirect URL send to Supabase:', redirectUrl);
+
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${req.protocol}://${req.get('host')}/reset-password`
+    redirectTo: redirectUrl
   });
-  if (error) return res.status(400).json({ success: false, message: error.message });
-  return res.json({ success: true, message: 'Đã gửi Email khôi phục! Vui lòng kiểm tra hộp thư.' });
+
+  if (error) {
+    console.error('error when send email to Supabase:', error.message);
+    return res.status(400).json({ success: false, message: error.message });
+  }
+
+  return res.json({ 
+    success: true, 
+    message: 'Đã gửi Email khôi phục! Vui lòng kiểm tra cả thư mục Spam/Rác.' 
+  });
 };
 
 export const updatePassword = async (req, res) => {
