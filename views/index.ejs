@@ -14,7 +14,16 @@
 </head>
 <body <%- config.background ? `style="background: ${config.background};"` : '' %>>
 
-    <!-- Ambient Glowing Orbs for dynamic lighting effect -->
+    <!-- Floating GitHub Button -->
+    <% if (config.github) { %>
+    <a href="<%= config.github %>" target="_blank" rel="noopener noreferrer" class="github-corner-btn" title="View Source on GitHub">
+        <i class="fa-brands fa-github"></i>
+        <span>GitHub</span>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.72rem; opacity: 0.75;"></i>
+    </a>
+    <% } %>
+
+    <!-- Ambient Glowing Orbs for optimized lighting effect -->
     <div class="ambient-glow orb-1"></div>
     <div class="ambient-glow orb-2"></div>
     <div class="ambient-glow orb-3"></div>
@@ -35,11 +44,11 @@
                         
                         <% if (config.banner.image) { %>
                             <div class="banner-img-wrapper mb-4">
-                                <img src="<%= config.banner.image %>" alt="Banner" class="banner-img">
+                                <img src="<%= config.banner.image %>" alt="Banner" class="banner-img" loading="lazy">
                             </div>
                         <% } %>
 
-                        <ul class="list-unstyled d-flex flex-column gap-2 text-white-50 feature-list">
+                        <ul class="list-unstyled d-flex flex-column gap-2 text-white-50 feature-list mb-4">
                             <% config.banner.features.forEach((feature, index) => { %>
                                 <li class="feature-item d-flex align-items-center gap-3" style="--item-index: <%= index %>;">
                                     <i class="fa-solid fa-circle-check text-primary fs-5"></i>
@@ -47,6 +56,17 @@
                                 </li>
                             <% }); %>
                         </ul>
+
+                        <!-- Banner Meta Footer -->
+                        <div class="banner-footer pt-3 d-flex justify-content-between align-items-center small text-white-50">
+                            <span><i class="fa-solid fa-shield-halved text-primary me-1"></i> JWT + Cookie HttpOnly Security</span>
+                            <% if (config.github) { %>
+                            <a href="<%= config.github %>" target="_blank" rel="noopener noreferrer" class="text-white-50 text-decoration-none d-inline-flex align-items-center gap-1">
+                                <i class="fa-brands fa-github"></i>
+                                <span>Star on GitHub</span>
+                            </a>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
 
@@ -156,6 +176,41 @@
                                 </div>
                             </form>
 
+                        </div>
+
+                        <!-- Card Footer: Powered By & Design By -->
+                        <div class="auth-card-footer">
+                            <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap mb-2">
+                                <span class="small text-muted fw-semibold" style="font-size: 0.76rem;">Powered by:</span>
+                                <% if (config.poweredBy && config.poweredBy.length) { %>
+                                    <% config.poweredBy.forEach(item => { %>
+                                        <span class="tech-badge">
+                                            <i class="<%= item.icon %>"></i>
+                                            <span><%= item.name %></span>
+                                        </span>
+                                    <% }); %>
+                                <% } else { %>
+                                    <span class="tech-badge"><i class="fa-brands fa-node-js text-success"></i> Node.js</span>
+                                    <span class="tech-badge"><i class="fa-solid fa-bolt text-emerald"></i> Supabase</span>
+                                <% } %>
+                            </div>
+
+                            <div class="text-center text-muted" style="font-size: 0.78rem;">
+                                <span>Design by </span>
+                                <% if (config.author && config.author.url) { %>
+                                    <a href="<%= config.author.url %>" target="_blank" rel="noopener noreferrer" class="link-author">
+                                        <%= config.author.name %>
+                                    </a>
+                                <% } else { %>
+                                    <span class="fw-semibold text-dark"><%= config.author ? config.author.name : 'minhduc290613' %></span>
+                                <% } %>
+                                <% if (config.github) { %>
+                                    <span class="mx-1">•</span>
+                                    <a href="<%= config.github %>" target="_blank" rel="noopener noreferrer" class="link-source">
+                                        <i class="fa-brands fa-github me-1"></i>Source
+                                    </a>
+                                <% } %>
+                            </div>
                         </div>
 
                     </div>

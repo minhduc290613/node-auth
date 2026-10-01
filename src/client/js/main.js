@@ -30,46 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2. Subtle 3D Card Tilt Interaction (Desktop only)
-  const card = document.getElementById('authCard');
-  if (card && window.matchMedia('(min-width: 992px)').matches) {
-    let bounds = null;
 
-    const onMouseMove = (e) => {
-      if (!bounds) bounds = card.getBoundingClientRect();
-      const mouseX = e.clientX;
-      const mouseY = e.clientY;
-      const leftX = mouseX - bounds.left;
-      const topY = mouseY - bounds.top;
-      const center = {
-        x: leftX - bounds.width / 2,
-        y: topY - bounds.height / 2
-      };
-      const distance = Math.hypot(center.x, center.y);
-
-      // Max rotation: 3.5 degrees for an ultra-tasteful, elegant feel
-      const maxRot = 3.5;
-      const rotX = (-center.y / (bounds.height / 2)) * maxRot;
-      const rotY = (center.x / (bounds.width / 2)) * maxRot;
-
-      card.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
-    };
-
-    card.addEventListener('mouseenter', () => {
-      bounds = card.getBoundingClientRect();
-      card.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease';
-    });
-
-    card.addEventListener('mousemove', (e) => {
-      requestAnimationFrame(() => onMouseMove(e));
-    });
-
-    card.addEventListener('mouseleave', () => {
-      card.style.transition = 'transform 0.6s var(--ease-spring), box-shadow 0.3s ease';
-      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-      bounds = null;
-    });
-  }
 
   // 3. Form Submit Handlers
   document.getElementById('loginForm')?.addEventListener('submit', (e) => {

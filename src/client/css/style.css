@@ -36,7 +36,7 @@ body {
 }
 
 /* ==========================================================================
-   1. AMBIENT GLOWING ORBS (Dynamic Background Lighting)
+   1. AMBIENT GLOWING ORBS (Optimized GPU-Accelerated Lighting)
    ========================================================================== */
 
 .ambient-glow {
@@ -44,54 +44,33 @@ body {
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
-  filter: blur(80px);
-  opacity: 0.6;
-  will-change: transform;
+  filter: blur(55px);
+  opacity: 0.5;
+  transform: translateZ(0); /* Cache static layer in GPU memory */
 }
 
 .orb-1 {
-  width: 520px;
-  height: 520px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.55) 0%, rgba(37, 99, 235, 0.2) 65%, transparent 100%);
-  top: -120px;
-  left: -120px;
-  animation: floatOrb1 22s ease-in-out infinite alternate;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.45) 0%, rgba(37, 99, 235, 0.15) 65%, transparent 100%);
+  top: -80px;
+  left: -80px;
 }
 
 .orb-2 {
-  width: 560px;
-  height: 560px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(236, 72, 153, 0.2) 60%, transparent 100%);
-  bottom: -150px;
-  right: -100px;
-  animation: floatOrb2 26s ease-in-out infinite alternate;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.38) 0%, rgba(236, 72, 153, 0.12) 60%, transparent 100%);
+  bottom: -100px;
+  right: -80px;
 }
 
 .orb-3 {
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(circle, rgba(14, 165, 233, 0.4) 0%, rgba(99, 102, 241, 0.15) 70%, transparent 100%);
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.35) 0%, rgba(99, 102, 241, 0.1) 70%, transparent 100%);
   top: 35%;
-  left: 40%;
-  animation: floatOrb3 20s ease-in-out infinite alternate;
-}
-
-@keyframes floatOrb1 {
-  0%   { transform: translate(0, 0) scale(1); }
-  50%  { transform: translate(60px, 40px) scale(1.1); }
-  100% { transform: translate(-40px, 70px) scale(0.92); }
-}
-
-@keyframes floatOrb2 {
-  0%   { transform: translate(0, 0) scale(1); }
-  50%  { transform: translate(-70px, -50px) scale(1.12); }
-  100% { transform: translate(40px, -30px) scale(0.95); }
-}
-
-@keyframes floatOrb3 {
-  0%   { transform: translate(0, 0) scale(0.9); }
-  50%  { transform: translate(50px, -40px) scale(1.15); }
-  100% { transform: translate(-30px, 30px) scale(1); }
+  left: 35%;
 }
 
 /* ==========================================================================
@@ -111,13 +90,14 @@ body {
 
 .left-banner {
   background: var(--banner-bg);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--banner-border);
-  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  animation: bannerEntrance 0.9s var(--ease-spring) both;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  animation: bannerEntrance 0.7s var(--ease-spring) both;
   position: relative;
   overflow: hidden;
+  transform: translateZ(0);
 }
 
 .left-banner::before {
@@ -133,11 +113,11 @@ body {
 @keyframes bannerEntrance {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.98);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -182,24 +162,10 @@ body {
   letter-spacing: -0.5px;
 }
 
-/* Banner Image with Ambient Reflection Glow */
+/* Banner Image (Clean, sharp, GPU-friendly shadow) */
 .banner-img-wrapper {
   position: relative;
   border-radius: 20px;
-  perspective: 1000px;
-}
-
-.banner-img-wrapper::after {
-  content: '';
-  position: absolute;
-  inset: 12px;
-  background: inherit;
-  filter: blur(28px);
-  opacity: 0.5;
-  z-index: -1;
-  transform: translateY(14px) scale(0.94);
-  border-radius: 20px;
-  transition: all 0.5s var(--ease-spring);
 }
 
 .banner-img {
@@ -207,37 +173,32 @@ body {
   max-height: 270px;
   object-fit: cover;
   border-radius: 20px;
-  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.6s var(--ease-spring), box-shadow 0.6s var(--ease-spring);
-  animation: subtleFloat 7s ease-in-out infinite alternate;
+  transition: transform 0.4s var(--ease-spring), box-shadow 0.4s ease;
+  transform: translateZ(0);
 }
 
 .banner-img-wrapper:hover .banner-img {
-  transform: translateY(-6px) scale(1.015);
-  box-shadow: 0 35px 55px -15px rgba(0, 0, 0, 0.7);
-}
-
-@keyframes subtleFloat {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-8px); }
+  transform: translateY(-4px);
+  box-shadow: 0 28px 50px -12px rgba(0, 0, 0, 0.65);
 }
 
 /* Feature List Items with Staggered Entrance */
 .feature-item {
   padding: 10px 14px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.3s var(--ease-spring);
-  animation: featureSlideIn 0.6s var(--ease-spring) both;
-  animation-delay: calc(0.3s + (var(--item-index, 0) * 0.12s));
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.25s var(--ease-spring);
+  animation: featureSlideIn 0.5s var(--ease-spring) both;
+  animation-delay: calc(0.2s + (var(--item-index, 0) * 0.1s));
 }
 
 @keyframes featureSlideIn {
   from {
     opacity: 0;
-    transform: translateX(-15px);
+    transform: translateX(-12px);
   }
   to {
     opacity: 1;
@@ -246,9 +207,9 @@ body {
 }
 
 .feature-item:hover {
-  background: rgba(59, 130, 246, 0.14);
-  border-color: rgba(96, 165, 250, 0.35);
-  transform: translateX(8px);
+  background: rgba(59, 130, 246, 0.18);
+  border-color: rgba(96, 165, 250, 0.4);
+  transform: translateX(6px);
   color: #ffffff !important;
 }
 
@@ -257,40 +218,45 @@ body {
 }
 
 .feature-item:hover i {
-  transform: scale(1.3) rotate(8deg);
+  transform: scale(1.25);
   color: #60a5fa !important;
 }
 
 /* ==========================================================================
-   4. RIGHT LOGIN CARD (Glassmorphism Supreme)
+   4. RIGHT LOGIN CARD (Optimized Fast Glassmorphism)
    ========================================================================== */
 
 .right-form-wrapper {
   background: var(--card-bg);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   max-width: 480px;
   width: 100%;
   border-radius: 28px;
   border: 1px solid var(--card-border);
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35),
-              0 0 0 1px rgba(255, 255, 255, 0.6),
-              inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.3),
+              0 0 0 1px rgba(255, 255, 255, 0.8),
+              inset 0 1px 2px rgba(255, 255, 255, 0.95);
   position: relative;
   overflow: hidden;
-  animation: cardEntrance 0.8s var(--ease-spring) both;
-  transform-style: preserve-3d;
-  will-change: transform;
+  animation: cardEntrance 0.7s var(--ease-spring) both;
+  transform: translateZ(0);
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+}
+
+.right-form-wrapper:hover {
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35),
+              0 0 0 1px rgba(255, 255, 255, 0.9);
 }
 
 @keyframes cardEntrance {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.97);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -304,22 +270,15 @@ body {
   height: 3px;
   background: var(--primary-gradient);
   border-radius: 3px;
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.9);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
 }
 
-/* Animated Gradient Header */
+/* Header Text Gradient (Crisp, zero-lag) */
 .text-gradient {
-  background: linear-gradient(135deg, #1d4ed8 0%, #4f46e5 50%, #9333ea 100%);
-  background-size: 200% 200%;
+  background: linear-gradient(135deg, #1d4ed8 0%, #4f46e5 50%, #7c3aed 100%);
   background-clip: text;
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradientShift 6s ease infinite;
-}
-
-@keyframes gradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 /* ==========================================================================
@@ -658,10 +617,158 @@ body {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+/* ==========================================================================
+   10. GITHUB LINK, POWERED BY & DESIGN BY BRANDING
+   ========================================================================== */
+
+/* Floating GitHub Badge (Top-Right) */
+.github-corner-btn {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 1000; /* Tăng z-index để tránh bị che bởi header/modal */
+  
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap; /* Tránh vỡ hàng chữ trên màn hình nhỏ */
+  
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+  
+  /* Tối ưu hiệu năng: Chỉ transition các thuộc tính thay đổi thay vì "all" */
+  transition: 
+    background-color 0.25s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    border-color 0.25s ease,
+    transform 0.25s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    box-shadow 0.25s ease;
+    
+  transform: translateZ(0);
+}
+
+/* 1. Trạng thái Hover (Rê chuột) */
+.github-corner-btn:hover {
+  color: #ffffff;
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.5);
+}
+
+/* 2. Trạng thái Active (Bấm giữ) */
+.github-corner-btn:active {
+  transform: translateY(0) scale(0.96) translateZ(0);
+  box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* 3. Trạng thái Focus (Bàn phím/Accessibility) */
+.github-corner-btn:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 3px;
+}
+
+/* 4. Responsive cho màn hình di động nhỏ */
+@media (max-width: 640px) {
+  .github-corner-btn {
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+.github-corner-btn:hover {
+  background: #0f172a;
+  color: #38bdf8;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.45);
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.github-corner-btn i.fa-github {
+  font-size: 1.15rem;
+}
+
+/* Auth Card Footer */
+.auth-card-footer {
+  border-top: 1px solid #e2e8f0;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+.tech-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.tech-badge:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.text-emerald {
+  color: #10b981;
+}
+
+.link-author {
+  color: #4f46e5;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link-author:hover {
+  color: #3730a3;
+  text-decoration: underline;
+}
+
+.link-source {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link-source:hover {
+  color: #0f172a;
+}
+
+/* Banner Footer (Left Banner Bottom) */
+.banner-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.banner-footer a {
+  transition: color 0.2s ease;
+}
+
+.banner-footer a:hover {
+  color: #ffffff !important;
 }
 
 /* ==========================================================================
-   10. RESPONSIVE OPTIMIZATION
+   11. RESPONSIVE OPTIMIZATION
    ========================================================================== */
 
 @media (max-width: 991.98px) {

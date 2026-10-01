@@ -3,7 +3,7 @@ export const siteConfig = {
   title: "NodeAuth Portal - Hệ Thống Đăng Nhập",
   favicon: "https://supabase.com/favicon/favicon-32x32.png", //Favicon Here
   
-  background: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe') center/cover no-repeat",
+  background: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=75') center/cover no-repeat",
 
   banner: {
     badge: " Phiên bản 2.0",
@@ -15,5 +15,16 @@ export const siteConfig = {
       "Bảo mật Cookie HttpOnly",
       "Tốc độ xử lý dữ liệu tức thì"
     ]
-  }
+  },
+
+  github: "https://github.com/minhduc290613/node-auth",
+  author: {
+    name: "minhduc290613",
+    url: "https://github.com/minhduc290613"
+  },
+  poweredBy: [
+    { name: "Node.js", icon: "fa-brands fa-node-js" },
+    { name: "Express", icon: "fa-solid fa-server" },
+    { name: "Supabase", icon: "fa-solid fa-bolt" }
+  ]
 };
