@@ -1,7 +1,7 @@
 # NodeAuth Portal
 
 <p align="center">
-  <img src="https://s.protechvn.io.vn/image-auth" alt="NodeAuth Banner" width="100%" style="border-radius: 10px; max-height: 320px; object-fit: cover;" />
+  <img src="https://photos.fife.usercontent.google.com/pw/AP1GczNPfgcicncupj_A-tXJRNr-Roz-0BmVPxxqqPCm5C7NZ_62ZpFdA0EH=w2223-h1302-s-no-gm?authuser=0" alt="NodeAuth Banner" width="100%" style="border-radius: 10px; max-height: 320px; object-fit: cover;" />
 </p>
 
 <p align="center">
