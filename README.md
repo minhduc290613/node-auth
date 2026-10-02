@@ -36,31 +36,32 @@
 
 ```text
 node-auth/
-├── public/                     # Static files được Vite đóng gói
+├── public/                     # Static files
 │   ├── css/bundle.css          # CSS compiled
 │   └── js/bundle.js            # JS compiled
 ├── src/
-│   ├── client/                 # Mã nguồn frontend (Client-side)
+│   ├── client/                 # Frontend source code (Client-side)
 │   │   ├── css/style.css       # Custom styles & themes
 │   │   └── js/                 # Client scripts (main.js, api.js, ui.js)
 │   ├── config/
-│   │   ├── site.js             # Cấu hình thương hiệu, theme, banner
-│   │   └── supabase.js         # Khởi tạo Supabase client
+│   │   ├── site.js             # Brand configuration, theme, banner
+│   │   └── supabase.js         # Initialize Supabase client
 │   ├── controllers/
-│   │   └── authController.js   # Xử lý logic đăng nhập, đăng ký, đăng xuất
+│   │   └── authController.js   # Handle login, register, logout logic
 │   ├── middleware/
-│   │   └── authMiddleware.js   # Kiểm tra và xác thực JWT token (requireAuth)
+│   │   └── authMiddleware.js   # Check and verify JWT token (requireAuth)
 │   └── routes/
-│       ├── authRoutes.js       # Các router API xác thực (/api/auth)
-│       └── viewRoutes.js       # Các router render trang EJS (/, /dashboard)
+│       ├── authRoutes.js       # Authentication API routes (/api/auth)
+│       └── viewRoutes.js       # EJS page render routes (/, /dashboard)
 ├── views/                      # EJS Templates
-│   ├── index.ejs               # Giao diện xác thực (Tabs đăng nhập/đăng ký)
-│   ├── dashboard.ejs           # Giao diện sau khi đăng nhập thành công
-│   └── error.ejs               # Trang thông báo lỗi
-├── .env                        # Biến môi trường (PORT, SUPABASE keys)
+│   ├── index.ejs               # Authentication Interface (Login/Register Tabs)
+│   ├── dashboard.ejs           # Interface after successful login
+│   ├── error.ejs               # Error notification page
+│   └── reset-password.ejs      # Password reset page
+├── .env                        # Environment variables (PORT, SUPABASE keys)
 ├── package.json                # Dependencies & scripts
-├── server.js                   # Điểm khởi chạy ứng dụng Express
-└── vite.config.js              # Cấu hình bundler Vite
+├── server.js                   # Express application entry point
+└── vite.config.js              # Vite bundler configuration
 ```
 
 ---
