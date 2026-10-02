@@ -124,19 +124,21 @@ Chỉnh sửa file `src/config/site.js` để tuỳ biến thông tin hiển th�
 ```javascript
 export const siteConfig = {
   title: "NodeAuth Portal - Hệ Thống Đăng Nhập",
-  favicon: "https://supabase.com/favicon/favicon-32x32.png",
-  background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
+  favicon: "https://supabase.com/favicon/favicon-32x32.png", //Favicon Here
+  
+  background: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=75') center/cover no-repeat",
+
   banner: {
-    badge: "Phiên bản 2.0",
+    badge: " Phiên bản 2.0",
     title: "Trải nghiệm Nền tảng Bảo mật & Siêu Tốc",
-    subtitle: "Tích hợp Node.js, Express và Supabase Auth. Quản lý tài khoản an toàn.",
+    subtitle: "Tích hợp Node.js, Express và Supabase Auth. Quản lý tài khoản dễ dàng, an toàn và tối ưu hiệu năng.",
     image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
     features: [
       "Xác thực Token mã hóa chuẩn JWT",
       "Bảo mật Cookie HttpOnly",
       "Tốc độ xử lý dữ liệu tức thì"
     ]
-  }
+  },
 };
 ```
 
@@ -243,17 +245,24 @@ SUPABASE_ANON_KEY=your-supabase-anon-key
 #### Step 3: Customize Branding & Content
 Edit `src/config/site.js` to customize your application's appearance:
 ```javascript
+// src/config/site.js
 export const siteConfig = {
-  title: "Your Web Title",
-  favicon: "/your-favicon.ico",
-  background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+  title: "Your web title",
+  favicon: "you link favicon", //Favicon Here
+  
+  background: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=75') center/cover no-repeat",
+
   banner: {
-    badge: "New Version",
+    badge: " version 2.0",
     title: "Welcome Heading",
     subtitle: "Brief description of your app",
-    image: "https://your-banner-image-url.jpg",
-    features: ["Feature 1", "Feature 2", "Feature 3"]
-  }
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+    features: [
+      "jwt token",
+      "Cookie HttpOnly",
+      "data processing speed"
+    ]
+  },
 };
 ```
 
@@ -310,6 +319,8 @@ Visit the application at: **[http://localhost:3000](http://localhost:3000)**
 | `POST` | `/api/auth/register` | Đăng ký tài khoản người dùng mới | No |
 | `POST` | `/api/auth/forgot` | Gửi email liên kết khôi phục mật khẩu | No |
 | `GET` | `/api/auth/logout` | Xoá session cookie & đăng xuất | No |
+| `GET` | `/reset-password` | Trang reset mật khẩu | No |
+| `POST` | `/api/auth/reset-password` | Reset mật khẩu | No |
 
 ---
 
