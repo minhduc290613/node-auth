@@ -9,7 +9,7 @@
   --success-gradient: linear-gradient(135deg, #059669 0%, #10b981 100%);
   --warning-gradient: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
   --primary-glow: rgba(99, 102, 241, 0.35);
-  
+
   --card-bg: rgba(255, 255, 255, 0.94);
   --card-border: rgba(255, 255, 255, 0.6);
   --banner-bg: rgba(15, 23, 42, 0.65);
@@ -46,7 +46,8 @@ body {
   z-index: 0;
   filter: blur(55px);
   opacity: 0.5;
-  transform: translateZ(0); /* Cache static layer in GPU memory */
+  transform: translateZ(0);
+  /* Cache static layer in GPU memory */
 }
 
 .orb-1 {
@@ -115,6 +116,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -153,8 +155,17 @@ body {
 }
 
 @keyframes pulseDot {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50%      { transform: scale(1.4); opacity: 1; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
 }
 
 .banner-title {
@@ -200,6 +211,7 @@ body {
     opacity: 0;
     transform: translateX(-12px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -235,8 +247,8 @@ body {
   border-radius: 28px;
   border: 1px solid var(--card-border);
   box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.3),
-              0 0 0 1px rgba(255, 255, 255, 0.8),
-              inset 0 1px 2px rgba(255, 255, 255, 0.95);
+    0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
   position: relative;
   overflow: hidden;
   animation: cardEntrance 0.7s var(--ease-spring) both;
@@ -246,7 +258,7 @@ body {
 
 .right-form-wrapper:hover {
   box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35),
-              0 0 0 1px rgba(255, 255, 255, 0.9);
+    0 0 0 1px rgba(255, 255, 255, 0.9);
 }
 
 @keyframes cardEntrance {
@@ -254,6 +266,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -354,6 +367,7 @@ body {
     opacity: 0;
     transform: translateY(16px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -364,37 +378,37 @@ body {
    7. FORM CONTROLS & FLOATING INPUTS
    ========================================================================== */
 
-.form-floating > .form-control {
+.form-floating>.form-control {
   border: 1.5px solid #e2e8f0;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.85);
   font-size: 0.95rem;
   padding-left: 14px;
   transition: border-color 0.25s var(--ease-spring),
-              box-shadow 0.25s var(--ease-spring),
-              background 0.25s var(--ease-spring),
-              transform 0.25s var(--ease-spring);
+    box-shadow 0.25s var(--ease-spring),
+    background 0.25s var(--ease-spring),
+    transform 0.25s var(--ease-spring);
 }
 
-.form-floating > .form-control:hover {
+.form-floating>.form-control:hover {
   border-color: #cbd5e1;
   background: #ffffff;
 }
 
-.form-floating > .form-control:focus {
+.form-floating>.form-control:focus {
   background: #ffffff;
   border-color: #4f46e5;
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18), 0 6px 18px -4px rgba(99, 102, 241, 0.15);
   transform: translateY(-1px);
 }
 
-.form-floating > label {
+.form-floating>label {
   padding-left: 14px;
   color: #64748b;
   transition: all 0.2s ease;
 }
 
-.form-floating > .form-control:focus ~ label {
+.form-floating>.form-control:focus~label {
   color: #4f46e5;
   font-weight: 600;
 }
@@ -597,7 +611,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 #alertBox {
@@ -613,47 +629,52 @@ body {
     opacity: 0;
     transform: translateY(-16px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
 /* ==========================================================================
-   10. GITHUB LINK, POWERED BY & DESIGN BY BRANDING
-   ========================================================================== */
+ 10. GITHUB LINK, POWERED BY & DESIGN BY BRANDING
+ ========================================================================== */
 
 /* Floating GitHub Badge (Top-Right) */
 .github-corner-btn {
   position: fixed;
   top: 20px;
   right: 24px;
-  z-index: 1000; /* Tăng z-index để tránh bị che bởi header/modal */
-  
+  z-index: 1000;
+  /* Tăng z-index để tránh bị che bởi header/modal */
+
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  white-space: nowrap; /* Tránh vỡ hàng chữ trên màn hình nhỏ */
-  
+  white-space: nowrap;
+  /* Tránh vỡ hàng chữ trên màn hình nhỏ */
+
   background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  
+
   color: #f8fafc;
   border: 1px solid rgba(255, 255, 255, 0.16);
   padding: 8px 16px;
   border-radius: 9999px;
-  
+
   font-size: 0.85rem;
   font-weight: 600;
   text-decoration: none;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
-  
+
   /* Tối ưu hiệu năng: Chỉ transition các thuộc tính thay đổi thay vì "all" */
-  transition: 
+  transition:
     background-color 0.25s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
     border-color 0.25s ease,
     transform 0.25s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
     box-shadow 0.25s ease;
-    
+
   transform: translateZ(0);
 }
 
@@ -768,22 +789,27 @@ body {
 }
 
 /* ==========================================================================
-   11. RESPONSIVE OPTIMIZATION
-   ========================================================================== */
+ 11. RESPONSIVE OPTIMIZATION
+ ========================================================================== */
 
 @media (max-width: 991.98px) {
   .right-form-wrapper {
     max-width: 460px;
     padding: 2rem !important;
   }
-  .orb-1, .orb-2 {
+
+  .orb-1,
+  .orb-2 {
     width: 320px;
     height: 320px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

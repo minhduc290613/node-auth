@@ -16,15 +16,4 @@ export const siteConfig = {
       "Tốc độ xử lý dữ liệu tức thì"
     ]
   },
-
-  github: "https://github.com/minhduc290613/node-auth",
-  author: {
-    name: "minhduc290613",
-    url: "https://github.com/minhduc290613"
-  },
-  poweredBy: [
-    { name: "Node.js", icon: "fa-brands fa-node-js" },
-    { name: "Express", icon: "fa-solid fa-server" },
-    { name: "Supabase", icon: "fa-solid fa-bolt" }
-  ]
 };

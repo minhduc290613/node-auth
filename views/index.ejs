@@ -178,38 +178,24 @@
 
                         </div>
 
-                        <!-- Card Footer: Powered By & Design By -->
+                        <!-- Card Footer: Powered By & Design By (Hardcoded - DO NOT REMOVE) -->
                         <div class="auth-card-footer">
                             <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap mb-2">
                                 <span class="small text-muted fw-semibold" style="font-size: 0.76rem;">Powered by:</span>
-                                <% if (config.poweredBy && config.poweredBy.length) { %>
-                                    <% config.poweredBy.forEach(item => { %>
-                                        <span class="tech-badge">
-                                            <i class="<%= item.icon %>"></i>
-                                            <span><%= item.name %></span>
-                                        </span>
-                                    <% }); %>
-                                <% } else { %>
-                                    <span class="tech-badge"><i class="fa-brands fa-node-js text-success"></i> Node.js</span>
-                                    <span class="tech-badge"><i class="fa-solid fa-bolt text-emerald"></i> Supabase</span>
-                                <% } %>
+                                <span class="tech-badge"><i class="fa-brands fa-node-js"></i> <span>Node.js</span></span>
+                                <span class="tech-badge"><i class="fa-solid fa-server"></i> <span>Express</span></span>
+                                <span class="tech-badge"><i class="fa-solid fa-bolt"></i> <span>Supabase</span></span>
                             </div>
 
                             <div class="text-center text-muted" style="font-size: 0.78rem;">
                                 <span>Design by </span>
-                                <% if (config.author && config.author.url) { %>
-                                    <a href="<%= config.author.url %>" target="_blank" rel="noopener noreferrer" class="link-author">
-                                        <%= config.author.name %>
-                                    </a>
-                                <% } else { %>
-                                    <span class="fw-semibold text-dark"><%= config.author ? config.author.name : 'minhduc290613' %></span>
-                                <% } %>
-                                <% if (config.github) { %>
-                                    <span class="mx-1">•</span>
-                                    <a href="<%= config.github %>" target="_blank" rel="noopener noreferrer" class="link-source">
-                                        <i class="fa-brands fa-github me-1"></i>Source
-                                    </a>
-                                <% } %>
+                                <a href="https://github.com/minhduc290613" target="_blank" rel="noopener noreferrer" class="link-author">
+                                    minhduc290613
+                                </a>
+                                <span class="mx-1">•</span>
+                                <a href="https://github.com/minhduc290613/node-auth" target="_blank" rel="noopener noreferrer" class="link-source">
+                                    <i class="fa-brands fa-github me-1"></i>Source
+                                </a>
                             </div>
                         </div>
 
