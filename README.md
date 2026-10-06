@@ -323,7 +323,9 @@ Visit the application at: **[http://localhost:3000](http://localhost:3000)**
 | `POST` | `/api/auth/reset-password` | Reset mật khẩu | No |
 
 ---
+## Donate me
 
+[![Donate Me](https://img.shields.io/badge/Donate-Me-ff69b4?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://donate.protechvn.io.vn)
 
 ## License
 
