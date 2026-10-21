@@ -1,11 +1,39 @@
 import { supabase } from '../config/supabase.js';
 import { getOAuthProviders, oauthProviders } from '../config/oauthProviders.js';
 
-const getAppUrl = () => {
-  if (process.env.APP_URL) return process.env.APP_URL.replace(/\/$/, '');
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  if (process.env.NODE_ENV !== 'production') return `http://localhost:${process.env.PORT || 3000}`;
-  throw new Error('APP_URL must be configured in production.');
+const getAppUrl = (req) => {
+  const requestHost = req?.get('x-forwarded-host') || req?.get('host');
+  const requestOrigin = req && requestHost
+    ? `${req.protocol}://${requestHost}`
+    : '';
+  const appUrl = process.env.APP_URL || (
+    process.env.NODE_ENV !== 'production'
+      ? `http://localhost:${process.env.PORT || 3000}`
+      : requestOrigin
+  );
+  if (!appUrl) {
+    throw new Error('Set APP_URL to your canonical production website URL before enabling OAuth.');
+  }
+
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(appUrl);
+  } catch {
+    throw new Error('APP_URL must be a valid absolute website URL.');
+  }
+  if (
+    !['http:', 'https:'].includes(parsedUrl.protocol) ||
+    parsedUrl.username ||
+    parsedUrl.password ||
+    parsedUrl.pathname !== '/' ||
+    parsedUrl.search ||
+    parsedUrl.hash ||
+    (process.env.NODE_ENV === 'production' && parsedUrl.protocol !== 'https:')
+  ) {
+    throw new Error('APP_URL must be the canonical website origin (HTTPS in production), without a path or trailing route.');
+  }
+
+  return parsedUrl.origin;
 };
 
 const setAuthCookies = (res, accessToken, refreshToken) => {
@@ -29,13 +57,22 @@ export const startOAuthLogin = async (req, res, next) => {
   }
 
   let providers;
-  let redirectTo;
   try {
     providers = await getOAuthProviders();
-    redirectTo = `${getAppUrl()}/auth/callback`;
   } catch (error) {
     return next(error);
   }
+
+  let appUrl;
+  try {
+    appUrl = getAppUrl(req);
+  } catch (error) {
+    return res.status(500).render('error', {
+      message: error.message,
+      error: { status: 500 }
+    });
+  }
+  const redirectTo = `${appUrl}/auth/callback`;
 
   const providerSetting = providers.find(item => item.id === provider);
   if (!providerSetting?.enabled) {
@@ -67,6 +104,23 @@ export const startOAuthLogin = async (req, res, next) => {
       error: { status: 502 }
     });
   }
+
+  try {
+    const authorizationUrl = new URL(data.url);
+    const supabaseUrl = new URL(process.env.SUPABASE_URL);
+    if (
+      authorizationUrl.origin !== supabaseUrl.origin ||
+      authorizationUrl.searchParams.get('redirect_to') !== redirectTo
+    ) {
+      return res.status(502).render('error', {
+        message: `Supabase did not preserve the configured callback URL (${redirectTo}). Add this exact URL to Supabase Authentication → URL Configuration → Redirect URLs, and set Site URL to ${appUrl}.`,
+        error: { status: 502 }
+      });
+    }
+  } catch (validationError) {
+    return next(validationError);
+  }
+
   return res.redirect(data.url);
 };
 
@@ -118,7 +172,7 @@ export const forgotPassword = async (req, res) => {
 
   let redirectUrl;
   try {
-    redirectUrl = `${getAppUrl()}/reset-password`;
+    redirectUrl = `${getAppUrl(req)}/reset-password`;
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

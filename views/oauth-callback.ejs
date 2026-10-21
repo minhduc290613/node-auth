@@ -22,7 +22,8 @@
       const fragment = new URLSearchParams(window.location.hash.slice(1));
       const accessToken = fragment.get('access_token');
       const refreshToken = fragment.get('refresh_token');
-      const oauthError = new URLSearchParams(window.location.search).get('error_description');
+      const query = new URLSearchParams(window.location.search);
+      const oauthError = query.get('error_description') || query.get('error');
       window.history.replaceState(null, '', window.location.pathname);
       const nextPath = sessionStorage.getItem('authNextPath');
       const destination = nextPath && nextPath.startsWith('/') && !nextPath.startsWith('//') && !nextPath.includes('\\')
@@ -37,7 +38,7 @@
       if (oauthError) {
         fail(oauthError);
       } else if (!accessToken) {
-        fail('Sign-in did not return a valid session. Please try again.');
+        fail('Supabase did not return the sign-in session to /auth/callback. Check that APP_URL matches your canonical website domain and that APP_URL/auth/callback is allowlisted in Supabase Authentication → URL Configuration → Redirect URLs.');
       } else {
         fetch('/api/auth/oauth-session', {
           method: 'POST',

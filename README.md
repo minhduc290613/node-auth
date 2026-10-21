@@ -71,7 +71,7 @@ ADMIN_EMAILS=admin@example.com
 
 - `SUPABASE_URL`, `SUPABASE_ANON_KEY`: URL dự án và public/anon key từ Supabase.
 - `SUPABASE_SERVICE_ROLE_KEY`: chỉ dùng phía server để đọc/cập nhật bảng cấu hình OAuth. **Không đưa key này vào frontend, Git, hoặc biến môi trường có tiền tố `VITE_`.**
-- `APP_URL`: origin công khai của ứng dụng, không có dấu `/` cuối.
+- `APP_URL`: origin HTTPS canonical của ứng dụng, không có dấu `/` cuối. Khuyến nghị luôn khai báo trên VPS/Vercel; nếu để trống ở production, OAuth dùng origin HTTPS của request hiện tại (domain đó vẫn phải nằm trong Supabase Redirect URLs).
 - `ADMIN_EMAILS`: danh sách email admin, phân cách bằng dấu phẩy.
 
 Chạy migration tạo bảng lưu trạng thái provider bằng Supabase SQL Editor:
@@ -97,9 +97,12 @@ Mở <http://localhost:3000>. Đăng nhập bằng email thuộc `ADMIN_EMAILS`,
 2. Tạo GitHub OAuth App và/hoặc Google OAuth Client. Dùng đúng **Callback URL** được hiển thị trong cài đặt provider của Supabase (thường là `https://<project-ref>.supabase.co/auth/v1/callback`).
 3. Điền Client ID và Client Secret tương ứng vào cài đặt provider trong Supabase. Không lưu OAuth client secret trong repository.
 4. Vào **Authentication → URL Configuration**:
-   - Đặt **Site URL** là `APP_URL`.
-   - Thêm `APP_URL/auth/callback` và `APP_URL/reset-password` vào danh sách Redirect URLs.
+   - Đặt **Site URL** là origin chính xác của website, ví dụ `https://auth.example.com` (không thêm `/auth/callback`).
+   - Thêm URL callback đầy đủ, ví dụ `https://auth.example.com/auth/callback`, vào **Redirect URLs**.
+   - Thêm `https://auth.example.com/reset-password` và các URL local cần thử nghiệm (ví dụ `http://localhost:3000/auth/callback`) vào **Redirect URLs**.
 5. Bật/tắt từng nút sign-in trong `/admin`. Khi tắt ở đây, ứng dụng sẽ ẩn nút và từ chối yêu cầu đăng nhập OAuth trực tiếp cho provider đó.
+
+Luồng callback có hai bước riêng biệt: GitHub/Google trả về **Supabase callback URL** (`https://<project-ref>.supabase.co/auth/v1/callback`); sau khi xác thực, Supabase chuyển trình duyệt về **website callback URL** (`APP_URL/auth/callback`). Vì vậy, không đặt website callback làm callback URL của GitHub OAuth App. Nếu URL website chưa được allowlist chính xác, Supabase có thể fallback về Site URL (trang chủ). NodeAuth sẽ báo lỗi cấu hình thay vì âm thầm chuyển hướng sai.
 
 ### Bật Supabase OAuth 2.1 / OIDC Server
 
@@ -124,10 +127,10 @@ OAuth Server là tính năng biến dự án Supabase thành Identity Provider c
 ### Deploy lên Vercel
 
 1. Import repository vào Vercel.
-2. Thêm các biến môi trường ở trên trong **Project Settings → Environment Variables**. Đặt `APP_URL` thành URL HTTPS chính thức của deployment và cập nhật `ADMIN_EMAILS`.
+2. Thêm các biến môi trường ở trên trong **Project Settings → Environment Variables**. Đặt `APP_URL` thành origin HTTPS canonical của custom domain (ví dụ `https://auth.example.com`), không dùng deployment URL tạm thời nếu muốn tất cả OAuth redirect về domain chính thức. Cập nhật `ADMIN_EMAILS`.
 3. Chạy migration SQL trong dự án Supabase production.
 4. Deploy. Cấu hình `vercel.json` định tuyến Express app vào Vercel Function.
-5. Cập nhật Supabase **Site URL**, Redirect URLs và OAuth provider callbacks theo domain production. GitHub/Google callback vẫn là callback URL của Supabase provider như đã ghi trong Supabase Dashboard.
+5. Cập nhật Supabase **Site URL** thành `APP_URL`; thêm chính xác `APP_URL/auth/callback` và `APP_URL/reset-password` vào **Redirect URLs**. GitHub/Google OAuth App callback vẫn là callback URL của Supabase provider như đã ghi trong Supabase Dashboard.
 
 Không commit `.env`; chỉ dùng `.env.example` làm mẫu. Sau khi thay đổi biến môi trường trên Vercel, redeploy để áp dụng.
 
@@ -279,7 +282,7 @@ ADMIN_EMAILS=admin@example.com
 
 - `SUPABASE_URL` and `SUPABASE_ANON_KEY`: project URL and public/anon key.
 - `SUPABASE_SERVICE_ROLE_KEY`: server-only access to the OAuth settings table. **Never expose it to the browser, commit it, or use a `VITE_` variable name.**
-- `APP_URL`: public app origin, without a trailing slash.
+- `APP_URL`: canonical HTTPS app origin, without a trailing slash. Set it on VPS/Vercel when possible; if omitted in production, OAuth uses the current HTTPS request origin (which must still be in the Supabase Redirect URLs allowlist).
 - `ADMIN_EMAILS`: comma-separated admin email allowlist.
 
 Run the SQL migration in the Supabase SQL Editor:
@@ -305,9 +308,12 @@ Open <http://localhost:3000>. Sign in with an address in `ADMIN_EMAILS`, open **
 2. Create a GitHub OAuth App and/or Google OAuth Client. Set each app's callback URL to the exact callback shown in its Supabase provider settings (commonly `https://<project-ref>.supabase.co/auth/v1/callback`).
 3. Add the corresponding Client ID and Client Secret to the Supabase provider settings. Do not commit OAuth client secrets.
 4. In **Authentication → URL Configuration**:
-   - Set **Site URL** to `APP_URL`.
-   - Add `APP_URL/auth/callback` and `APP_URL/reset-password` to the Redirect URLs allowlist.
+   - Set **Site URL** to the exact website origin, e.g. `https://auth.example.com` (not `/auth/callback`).
+   - Add the full callback URL, e.g. `https://auth.example.com/auth/callback`, to **Redirect URLs**.
+   - Add `https://auth.example.com/reset-password` and any local URLs you use for testing (e.g. `http://localhost:3000/auth/callback`) to **Redirect URLs**.
 5. Use `/admin` to enable or disable each app sign-in button. Disabled providers are hidden and direct OAuth start requests are rejected.
+
+There are two separate callback steps: GitHub/Google returns to the **Supabase callback URL** (`https://<project-ref>.supabase.co/auth/v1/callback`); after authentication, Supabase redirects the browser to the **website callback URL** (`APP_URL/auth/callback`). Do not set the website callback as the GitHub OAuth App callback URL. If the website URL is not exactly allowlisted, Supabase may fall back to the Site URL (the homepage). NodeAuth now reports this configuration mismatch instead of silently redirecting incorrectly.
 
 ### Enable the Supabase OAuth 2.1 / OIDC Server
 
@@ -332,10 +338,10 @@ See the official [Supabase OAuth 2.1 Server guide](https://supabase.com/docs/gui
 ### Deploy to Vercel
 
 1. Import the repository into Vercel.
-2. Add the environment variables above under **Project Settings → Environment Variables**. Set `APP_URL` to the deployed HTTPS origin and configure `ADMIN_EMAILS`.
+2. Add the environment variables above under **Project Settings → Environment Variables**. Set `APP_URL` to the canonical HTTPS custom-domain origin (for example `https://auth.example.com`), rather than a temporary deployment URL when you want OAuth to return to the canonical domain. Configure `ADMIN_EMAILS`.
 3. Run the SQL migration against the production Supabase project.
 4. Deploy. `vercel.json` routes requests to the Express Vercel Function.
-5. Update Supabase **Site URL**, Redirect URLs, and production domains. GitHub/Google callback URLs remain the Supabase provider callback URLs shown in the Dashboard.
+5. Set the Supabase **Site URL** to `APP_URL`; add the exact `APP_URL/auth/callback` and `APP_URL/reset-password` URLs to **Redirect URLs**. GitHub/Google OAuth App callbacks remain the Supabase provider callback URLs shown in the Dashboard.
 
 Do not commit `.env`; use `.env.example` as a template. Redeploy after changing Vercel environment variables.
 
