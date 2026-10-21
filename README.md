@@ -17,6 +17,9 @@
   <img src="https://img.shields.io/badge/Express.js-4.18-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
   <img src="https://img.shields.io/badge/Supabase-Auth-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
   <img src="https://img.shields.io/badge/Vite-5.1-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/OAuth-GitHub%20%7C%20Google-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub and Google OAuth" />
+  <img src="https://img.shields.io/badge/Supabase-OAuth%202.1-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase OAuth 2.1" />
+  <img src="https://img.shields.io/badge/Deploy-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Deploy on Vercel" />
 </p>
 
 An Express authentication application powered by Supabase Auth. It includes email/password accounts, GitHub and Google sign-in, an administrator page, and a consent screen for Supabase's OAuth 2.1 / OpenID Connect server.
@@ -128,7 +131,80 @@ OAuth Server là tính năng biến dự án Supabase thành Identity Provider c
 
 Không commit `.env`; chỉ dùng `.env.example` làm mẫu. Sau khi thay đổi biến môi trường trên Vercel, redeploy để áp dụng.
 
-### Cấu trúc chính
+### Kết nối vào website hiện có
+
+**Cách 1 — Dùng NodeAuth làm website đăng nhập riêng:** deploy NodeAuth tại một subdomain, ví dụ `auth.example.com`, sau đó liên kết đến trang đăng nhập:
+
+```html
+<a href="https://auth.example.com/">Sign in</a>
+```
+
+Đặt `APP_URL=https://auth.example.com` và cấu hình Supabase Site URL, Redirect URLs theo domain này. Người dùng sẽ đăng nhập và quay lại dashboard của NodeAuth. Cookie `HttpOnly` được giới hạn theo domain xác thực; website ở domain khác **không thể đọc cookie này**. Nếu website chính cần tạo session riêng sau đăng nhập, cần triển khai một luồng callback/token exchange phía server cho website đó; không đưa service-role key hoặc access token vào JavaScript/frontend.
+
+**Cách 2 — Bảo vệ route trong cùng ứng dụng Express:** dùng chung middleware xác thực và cookie parser. Cài các dependency của NodeAuth trong ứng dụng, cấu hình cùng Supabase URL/key, rồi bảo vệ route của website:
+
+```js
+import cookieParser from 'cookie-parser';
+import { requireAuth } from './src/middleware/authMiddleware.js';
+
+app.use(cookieParser());
+
+app.get('/account', requireAuth, (req, res) => {
+  res.render('account', { user: req.user });
+});
+```
+
+Trong cùng ứng dụng/origin, liên kết đăng nhập có thể trỏ đến `/`; sau khi đăng nhập thành công, người dùng vào dashboard NodeAuth. Để chuyển hướng tới trang riêng của website sau đăng nhập, cần bổ sung callback/return URL allowlist cho ứng dụng; không nhận URL chuyển hướng tùy ý từ query string vì có thể tạo open redirect.
+
+### Cấu trúc dự án
+
+```text
+node-auth/
+├── api/
+│   └── index.js                               # Vercel Function entry
+├── public/
+│   ├── css/bundle.css                         # Vite-built stylesheet
+│   ├── js/bundle.js                           # Vite-built client bundle
+│   └── stylesheets/style.css                  # Legacy static stylesheet
+├── src/
+│   ├── app.js                                 # Shared Express app
+│   ├── client/
+│   │   ├── css/style.css                      # Frontend source styles
+│   │   └── js/
+│   │       ├── api.js                         # Frontend API form helper
+│   │       ├── main.js                        # Frontend entry and handlers
+│   │       └── ui.js                          # Form switching and alerts
+│   ├── config/
+│   │   ├── admin.js                           # Admin email allowlist
+│   │   ├── oauthProviders.js                  # OAuth provider settings
+│   │   ├── site.js                            # Branding and banner content
+│   │   └── supabase.js                        # Supabase Auth client
+│   ├── controllers/
+│   │   ├── authController.js                  # Email and social auth flows
+│   │   ├── oauthProviderController.js         # Admin provider switch API
+│   │   └── oauthServerController.js           # OAuth Server consent flow
+│   ├── middleware/
+│   │   └── authMiddleware.js                  # Session and admin protection
+│   └── routes/
+│       ├── adminRoutes.js                     # Admin API routes
+│       ├── authRoutes.js                      # Authentication API routes
+│       └── viewRoutes.js                      # Page routes
+├── supabase/
+│   └── migrations/
+│       └── 20261021000000_oauth_provider_settings.sql
+├── views/
+│   ├── admin.ejs                              # Admin provider settings
+│   ├── dashboard.ejs                          # Signed-in user dashboard
+│   ├── error.ejs                              # Error page
+│   ├── index.ejs                              # Sign-in and registration
+│   ├── oauth-callback.ejs                     # Social OAuth callback
+│   ├── oauth-consent.ejs                      # Supabase OAuth Server consent
+│   └── reset-password.ejs                     # Password reset page
+├── .env.example                               # Environment variable template
+├── server.js                                  # Local Express server
+├── vercel.json                                # Vercel deployment config
+└── vite.config.js                             # Frontend build config
+```
 
 ```text
 api/index.js                         Vercel Function entry
@@ -263,19 +339,79 @@ See the official [Supabase OAuth 2.1 Server guide](https://supabase.com/docs/gui
 
 Do not commit `.env`; use `.env.example` as a template. Redeploy after changing Vercel environment variables.
 
-### Main files
+### Connect NodeAuth to an existing website
+
+**Option 1 — Use NodeAuth as a separate sign-in portal:** deploy it on a subdomain such as `auth.example.com` and link to its sign-in page:
+
+```html
+<a href="https://auth.example.com/">Sign in</a>
+```
+
+Set `APP_URL=https://auth.example.com` and configure the matching Supabase Site URL and Redirect URLs. Users sign in and return to the NodeAuth dashboard. The `HttpOnly` cookie is scoped to the authentication host, so a website on another domain **cannot read it**. If your main website needs its own session after sign-in, implement a server-side callback/token exchange for that website; never put the service-role key or access token in frontend JavaScript.
+
+**Option 2 — Protect routes in the same Express application:** use the authentication middleware and cookie parser in your website. Install NodeAuth's dependencies and configure the same Supabase URL/key, then protect a route:
+
+```js
+import cookieParser from 'cookie-parser';
+import { requireAuth } from './src/middleware/authMiddleware.js';
+
+app.use(cookieParser());
+
+app.get('/account', requireAuth, (req, res) => {
+  res.render('account', { user: req.user });
+});
+```
+
+Within the same app/origin, the sign-in link can point to `/`; successful sign-in takes the user to the NodeAuth dashboard. To return users to a separate page on your website after sign-in, implement a callback/return-URL allowlist; do not accept arbitrary redirect URLs from query parameters, as that can create an open redirect.
+
+### Project structure
 
 ```text
-api/index.js                              Vercel Function entry
-src/app.js                                Shared Express app
-src/config/oauthProviders.js              Supabase-backed provider settings
-src/controllers/oauthServerController.js  OAuth consent flow
-src/routes/adminRoutes.js                 Admin provider switches API
-src/routes/authRoutes.js                  Authentication API
-src/routes/viewRoutes.js                  Login, dashboard, admin, consent pages
-supabase/migrations/                      SQL migrations
-views/                                    EJS templates, including OAuth consent
-vercel.json                               Vercel routing/build configuration
+node-auth/
+├── api/
+│   └── index.js                               # Vercel Function entry
+├── public/
+│   ├── css/bundle.css                         # Vite-built stylesheet
+│   ├── js/bundle.js                           # Vite-built client bundle
+│   └── stylesheets/style.css                  # Legacy static stylesheet
+├── src/
+│   ├── app.js                                 # Shared Express app
+│   ├── client/
+│   │   ├── css/style.css                      # Frontend source styles
+│   │   └── js/
+│   │       ├── api.js                         # Frontend API form helper
+│   │       ├── main.js                        # Frontend entry and handlers
+│   │       └── ui.js                          # Form switching and alerts
+│   ├── config/
+│   │   ├── admin.js                           # Admin email allowlist
+│   │   ├── oauthProviders.js                  # OAuth provider settings
+│   │   ├── site.js                            # Branding and banner content
+│   │   └── supabase.js                        # Supabase Auth client
+│   ├── controllers/
+│   │   ├── authController.js                  # Email and social auth flows
+│   │   ├── oauthProviderController.js         # Admin provider switch API
+│   │   └── oauthServerController.js           # OAuth Server consent flow
+│   ├── middleware/
+│   │   └── authMiddleware.js                  # Session and admin protection
+│   └── routes/
+│       ├── adminRoutes.js                     # Admin API routes
+│       ├── authRoutes.js                      # Authentication API routes
+│       └── viewRoutes.js                      # Page routes
+├── supabase/
+│   └── migrations/
+│       └── 20261021000000_oauth_provider_settings.sql
+├── views/
+│   ├── admin.ejs                              # Admin provider settings
+│   ├── dashboard.ejs                          # Signed-in user dashboard
+│   ├── error.ejs                              # Error page
+│   ├── index.ejs                              # Sign-in and registration
+│   ├── oauth-callback.ejs                     # Social OAuth callback
+│   ├── oauth-consent.ejs                      # Supabase OAuth Server consent
+│   └── reset-password.ejs                     # Password reset page
+├── .env.example                               # Environment variable template
+├── server.js                                  # Local Express server
+├── vercel.json                                # Vercel deployment config
+└── vite.config.js                             # Frontend build config
 ```
 
 ### Endpoints
