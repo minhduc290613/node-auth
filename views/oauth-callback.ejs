@@ -9,7 +9,7 @@
 <body class="bg-light">
     <main class="container min-vh-100 d-flex align-items-center justify-content-center">
         <section class="card shadow-sm p-4 text-center" style="max-width: 440px; width: 100%;">
-            <h1 class="h4 mb-3">Completing GitHub sign-in</h1>
+            <h1 class="h4 mb-3">Completing sign-in</h1>
             <p id="status" class="text-muted mb-0" role="status">Please wait...</p>
         </section>
     </main>
@@ -17,8 +17,13 @@
       const status = document.getElementById('status');
       const fragment = new URLSearchParams(window.location.hash.slice(1));
       const accessToken = fragment.get('access_token');
+      const refreshToken = fragment.get('refresh_token');
       const oauthError = new URLSearchParams(window.location.search).get('error_description');
       window.history.replaceState(null, '', window.location.pathname);
+      const nextPath = sessionStorage.getItem('authNextPath');
+      const destination = nextPath && nextPath.startsWith('/') && !nextPath.startsWith('//') && !nextPath.includes('\\')
+        ? nextPath
+        : '/dashboard';
 
       const fail = (message) => {
         status.textContent = message;
@@ -28,19 +33,20 @@
       if (oauthError) {
         fail(oauthError);
       } else if (!accessToken) {
-        fail('GitHub sign-in did not return an access token. Please try again.');
+        fail('Sign-in did not return a valid session. Please try again.');
       } else {
         fetch('/api/auth/oauth-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ access_token: accessToken })
+          body: JSON.stringify({ access_token: accessToken, refresh_token: refreshToken })
         })
           .then(async response => {
             const result = await response.json();
             if (!response.ok || !result.success) {
               throw new Error(result.message || 'GitHub sign-in could not be verified.');
             }
-            window.location.replace('/dashboard');
+            sessionStorage.removeItem('authNextPath');
+            window.location.replace(destination);
           })
           .catch(error => fail(error.message));
       }

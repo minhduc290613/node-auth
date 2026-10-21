@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorize <%= client.name %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <main class="container min-vh-100 d-flex align-items-center justify-content-center py-4" data-authorization-id="<%= authorizationId %>">
+        <section class="card shadow-sm p-4 rounded-4" style="max-width: 520px; width: 100%;">
+            <div class="text-center mb-4">
+                <% if (client.logoUri) { %>
+                <img src="<%= client.logoUri %>" alt="" class="rounded mb-3" style="width: 56px; height: 56px; object-fit: contain;">
+                <% } %>
+                <h1 class="h4 fw-bold">Authorize <%= client.name %></h1>
+                <p class="text-muted mb-0">This application is requesting access to your NodeAuth account.</p>
+            </div>
+            <div class="border rounded p-3 mb-4">
+                <h2 class="h6 fw-bold">Requested permissions</h2>
+                <% if (scopes.length) { %>
+                <ul class="mb-0">
+                    <% scopes.forEach(scope => { %>
+                    <li><code><%= scope %></code></li>
+                    <% }); %>
+                </ul>
+                <% } else { %>
+                <p class="small text-muted mb-0">No additional permissions requested.</p>
+                <% } %>
+                <% if (client.uri) { %>
+                <a href="<%= client.uri %>" target="_blank" rel="noopener noreferrer" class="small d-inline-block mt-2">About this application</a>
+                <% } %>
+            </div>
+            <p id="consentStatus" class="small text-danger d-none" role="alert"></p>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-secondary flex-fill" data-action="deny">Deny</button>
+                <button type="button" class="btn btn-primary flex-fill" data-action="approve">Authorize</button>
+            </div>
+        </section>
+    </main>
+    <script>
+      const authorizationId = document.querySelector('[data-authorization-id]').dataset.authorizationId;
+      const status = document.getElementById('consentStatus');
+
+      document.querySelectorAll('[data-action]').forEach(button => {
+        button.addEventListener('click', async () => {
+          document.querySelectorAll('[data-action]').forEach(item => { item.disabled = true; });
+          status.classList.add('d-none');
+          try {
+            const response = await fetch('/api/auth/oauth-server/consent', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ authorization_id: authorizationId, action: button.dataset.action })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+              throw new Error(result.message || 'Unable to submit your choice.');
+            }
+            window.location.assign(result.redirectUrl);
+          } catch (error) {
+            status.textContent = error.message;
+            status.classList.remove('d-none');
+            document.querySelectorAll('[data-action]').forEach(item => { item.disabled = false; });
+          }
+        });
+      });
+    </script>
+</body>
+</html>

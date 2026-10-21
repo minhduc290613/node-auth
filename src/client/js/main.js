@@ -6,6 +6,19 @@ import { handleFormSubmit } from './api.js';
 window.switchView = switchView;
 
 document.addEventListener('DOMContentLoaded', () => {
+  const nextPath = document.body.dataset.nextPath;
+  if (nextPath && nextPath.startsWith('/') && !nextPath.startsWith('//')) {
+    sessionStorage.setItem('authNextPath', nextPath);
+  } else {
+    sessionStorage.removeItem('authNextPath');
+  }
+
+  const redirectAfterLogin = () => {
+    const destination = sessionStorage.getItem('authNextPath') || '/dashboard';
+    sessionStorage.removeItem('authNextPath');
+    window.location.replace(destination);
+  };
+
   // 1. Password Visibility Toggle
   document.querySelectorAll('.toggle-password-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -38,12 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     handleFormSubmit('/api/auth/login', {
       email: document.getElementById('loginEmail').value,
       password: document.getElementById('loginPassword').value
-    }, () => {
-      // Smooth redirect after successful login
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 500);
-    });
+    }, redirectAfterLogin);
   });
 
   document.getElementById('registerForm')?.addEventListener('submit', (e) => {

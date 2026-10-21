@@ -23,9 +23,57 @@
                 <small><strong>Email:</strong> <%= user.email %></small><br>
                 <small><strong>User ID:</strong> <%= user.id %></small>
             </div>
+            <h2 class="h5 fw-bold">Social sign-in providers</h2>
+            <p class="small text-muted">These switches control which social sign-in buttons are available on the login page. Configure each provider's credentials in Supabase first.</p>
+            <div class="mb-4">
+                <% providers.forEach(provider => { %>
+                <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-2">
+                    <div>
+                        <strong><%= provider.name %></strong>
+                        <div class="small text-muted">Supabase Auth social provider</div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input oauth-provider-switch" type="checkbox" role="switch"
+                               id="provider-<%= provider.id %>" data-provider="<%= provider.id %>"
+                               <%= provider.enabled ? 'checked' : '' %>
+                               aria-label="Enable <%= provider.name %> sign-in">
+                    </div>
+                </div>
+                <% }); %>
+                <div id="providerStatus" class="small" role="status" aria-live="polite"></div>
+            </div>
             <a href="/dashboard" class="btn btn-outline-primary w-100 mb-3">Back to dashboard</a>
             <a href="/api/auth/logout" class="btn btn-danger w-100 fw-bold">Sign Out</a>
         </section>
     </main>
+    <script>
+      document.querySelectorAll('.oauth-provider-switch').forEach(toggle => {
+        toggle.addEventListener('change', async () => {
+          const status = document.getElementById('providerStatus');
+          toggle.disabled = true;
+          status.className = 'small text-muted';
+          status.textContent = 'Saving provider settings...';
+          try {
+            const response = await fetch(`/api/admin/oauth-providers/${encodeURIComponent(toggle.dataset.provider)}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ enabled: toggle.checked })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+              throw new Error(result.message || 'Unable to save provider settings.');
+            }
+            status.className = 'small text-success';
+            status.textContent = `${toggle.dataset.provider} sign-in ${toggle.checked ? 'enabled' : 'disabled'}.`;
+          } catch (error) {
+            toggle.checked = !toggle.checked;
+            status.className = 'small text-danger';
+            status.textContent = error.message;
+          } finally {
+            toggle.disabled = false;
+          }
+        });
+      });
+    </script>
 </body>
 </html>

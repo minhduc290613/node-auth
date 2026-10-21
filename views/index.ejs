@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/bundle.css">
 </head>
-<body <%- config.background ? `style="background: ${config.background};"` : '' %>>
+<body data-next-path="<%= nextPath || '' %>" <%- config.background ? `style="background: ${config.background};"` : '' %>>
 
     <!-- Floating GitHub Button -->
     <% if (config.github) { %>
@@ -132,10 +132,15 @@
                                     <span>Sign In</span>
                                     <i class="fa-solid fa-arrow-right ms-2 btn-icon-arrow"></i>
                                 </button>
+                                <% const enabledProviders = providers.filter(provider => provider.enabled); %>
+                                <% if (enabledProviders.length) { %>
                                 <div class="text-center my-3 text-muted small">OR</div>
-                                <a href="/api/auth/github" class="btn btn-dark w-100 py-2.5 fw-bold rounded-3">
-                                    <i class="fa-brands fa-github me-2"></i> Continue with GitHub
-                                </a>
+                                <% enabledProviders.forEach(provider => { %>
+                                    <a href="/api/auth/oauth/<%= provider.id %>" class="btn btn-dark w-100 py-2.5 fw-bold rounded-3 mb-2">
+                                        <i class="fa-brands fa-<%= provider.id %> me-2"></i> Continue with <%= provider.name %>
+                                    </a>
+                                <% }); %>
+                                <% } %>
                             </form>
 
                             <!-- Registration form -->

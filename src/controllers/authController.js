@@ -1,4 +1,5 @@
 import { supabase } from '../config/supabase.js';
+import { getOAuthProviders, oauthProviders } from '../config/oauthProviders.js';
 
 const getAppUrl = () => {
   if (process.env.APP_URL) return process.env.APP_URL.replace(/\/$/, '');
@@ -7,27 +8,53 @@ const getAppUrl = () => {
   throw new Error('APP_URL must be configured in production.');
 };
 
-const setAuthCookie = (res, accessToken) => {
-  res.cookie('sb_access_token', accessToken, {
+const setAuthCookies = (res, accessToken, refreshToken) => {
+  const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 24 * 60 * 60 * 1000
-  });
+  };
+  res.cookie('sb_access_token', accessToken, options);
+  res.cookie('sb_refresh_token', refreshToken, options);
 };
 
-export const startGithubLogin = async (req, res, next) => {
+export const startOAuthLogin = async (req, res, next) => {
+  const provider = req.params.provider;
+  if (!oauthProviders.some(item => item.id === provider)) {
+    return res.status(404).render('error', {
+      message: 'This OAuth provider is not supported.',
+      error: { status: 404 }
+    });
+  }
+
+  let providers;
   let redirectTo;
   try {
+    providers = await getOAuthProviders();
     redirectTo = `${getAppUrl()}/auth/callback`;
   } catch (error) {
     return next(error);
   }
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-    options: { redirectTo }
-  });
+  const providerSetting = providers.find(item => item.id === provider);
+  if (!providerSetting?.enabled) {
+    return res.status(403).render('error', {
+      message: `${providerSetting?.name || provider} sign-in is currently disabled.`,
+      error: { status: 403 }
+    });
+  }
+
+  let data;
+  let error;
+  try {
+    ({ data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo }
+    }));
+  } catch (requestError) {
+    return next(requestError);
+  }
   if (error) {
     return res.status(502).render('error', {
       message: error.message,
@@ -36,23 +63,32 @@ export const startGithubLogin = async (req, res, next) => {
   }
   if (!data.url) {
     return res.status(502).render('error', {
-      message: 'Supabase did not provide a GitHub authorization URL.',
+      message: `Supabase did not provide a ${providerSetting.name} authorization URL.`,
       error: { status: 502 }
     });
   }
   return res.redirect(data.url);
 };
 
-export const createOAuthSession = async (req, res) => {
-  const { access_token: accessToken } = req.body;
-  if (typeof accessToken !== 'string' || !accessToken) {
-    return res.status(400).json({ success: false, message: 'A valid access token is required.' });
+export const createOAuthSession = async (req, res, next) => {
+  const { access_token: accessToken, refresh_token: refreshToken } = req.body;
+  if (
+    typeof accessToken !== 'string' ||
+    !accessToken ||
+    typeof refreshToken !== 'string' ||
+    !refreshToken
+  ) {
+    return res.status(400).json({ success: false, message: 'Valid access and refresh tokens are required.' });
   }
 
-  const { error } = await supabase.auth.getUser(accessToken);
-  if (error) return res.status(401).json({ success: false, message: 'GitHub sign-in could not be verified.' });
+  try {
+    const { error } = await supabase.auth.getUser(accessToken);
+    if (error) return res.status(401).json({ success: false, message: 'OAuth sign-in could not be verified.' });
+  } catch (error) {
+    return next(error);
+  }
 
-  setAuthCookie(res, accessToken);
+  setAuthCookies(res, accessToken, refreshToken);
   return res.json({ success: true });
 };
 
@@ -72,7 +108,7 @@ export const login = async (req, res) => {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return res.status(400).json({ success: false, message: error.message });
 
-  setAuthCookie(res, data.session.access_token);
+  setAuthCookies(res, data.session.access_token, data.session.refresh_token);
 
   return res.json({ success: true, message: 'Signed in successfully.' });
 };
@@ -123,10 +159,12 @@ export const updatePassword = async (req, res) => {
   }
 
   res.clearCookie('sb_access_token');
+  res.clearCookie('sb_refresh_token');
   return res.json({ success: true, message: 'Password updated successfully. Redirecting...' });
 };
 
 export const logout = (req, res) => {
   res.clearCookie('sb_access_token');
+  res.clearCookie('sb_refresh_token');
   res.redirect('/');
 };
