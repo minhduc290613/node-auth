@@ -39,12 +39,16 @@ node-auth/
 ├── public/                     # Static files
 │   ├── css/bundle.css          # CSS compiled
 │   └── js/bundle.js            # JS compiled
+├── api/
+│   └── index.js                # Vercel function entry point
 ├── src/
+│   ├── app.js                  # Shared Express application
 │   ├── client/                 # Frontend source code (Client-side)
 │   │   ├── css/style.css       # Custom styles & themes
 │   │   └── js/                 # Client scripts (main.js, api.js, ui.js)
 │   ├── config/
 │   │   ├── site.js             # Brand configuration, theme, banner
+│   │   ├── admin.js            # Admin email allowlist
 │   │   └── supabase.js         # Initialize Supabase client
 │   ├── controllers/
 │   │   └── authController.js   # Handle login, register, logout logic
@@ -52,15 +56,18 @@ node-auth/
 │   │   └── authMiddleware.js   # Check and verify JWT token (requireAuth)
 │   └── routes/
 │       ├── authRoutes.js       # Authentication API routes (/api/auth)
-│       └── viewRoutes.js       # EJS page render routes (/, /dashboard)
+│   └── viewRoutes.js       # EJS routes for login, dashboard, and admin pages
 ├── views/                      # EJS Templates
 │   ├── index.ejs               # Authentication Interface (Login/Register Tabs)
 │   ├── dashboard.ejs           # Interface after successful login
+│   ├── admin.ejs               # Admin-only page
+│   ├── oauth-callback.ejs      # GitHub OAuth callback
 │   ├── error.ejs               # Error notification page
 │   └── reset-password.ejs      # Password reset page
 ├── .env                        # Environment variables (PORT, SUPABASE keys)
 ├── package.json                # Dependencies & scripts
 ├── server.js                   # Express application entry point
+├── vercel.json                 # Vercel serverless routing
 └── vite.config.js              # Vite bundler configuration
 ```
 
@@ -198,6 +205,8 @@ Nếu bạn muốn ghép module xác thực này vào một dự án Express đa
 - **Centralized Config:** Easily rebrand Title, Favicon, Theme Background, and Banner features via `src/config/site.js` without touching HTML/CSS.
 - **MVC & Modular:** Clean separation of concerns, easy to integrate into any existing Express.js project.
 - **Optimized Assets:** Client styles and scripts are bundled via Vite.
+- **GitHub OAuth:** Sign in with GitHub through Supabase Auth.
+- **Admin access:** Protect `/admin` with a configurable email allowlist.
 
 ---
 
@@ -225,6 +234,12 @@ You **do not** need to create user tables manually. The user database (`auth.use
    - **Site URL**: `http://localhost:3000` or `https://yourdomain.com`
    - **Redirect URLs**: Add `http://localhost:3000/reset-password` or `https://yourdomain.com/reset-password`
 
+#### Step 4: Enable GitHub sign-in
+1. In Supabase, go to **Authentication** -> **Providers** -> **GitHub** and enable the provider.
+2. Create a GitHub OAuth App. Set its authorization callback URL to the callback URL shown in your Supabase GitHub provider settings (`https://<project-ref>.supabase.co/auth/v1/callback`).
+3. Add the app's client ID and secret to the Supabase provider settings.
+4. Add `http://localhost:3000/auth/callback` and your production `/auth/callback` URL to Supabase's allowed redirect URLs.
+
 ---
 
 ### 2. Setup & Installation
@@ -240,7 +255,11 @@ Create a `.env` :
 PORT=3000
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-supabase-anon-key
+APP_URL=http://localhost:3000
+ADMIN_EMAILS=admin@example.com
 ```
+
+`APP_URL` is the public origin used for OAuth and password-reset redirects. `ADMIN_EMAILS` is a comma-separated allowlist; only these signed-in email addresses can access `/admin`. Configure both values in Vercel's project environment variables for production.
 
 #### Step 3: Customize Branding & Content
 Edit `src/config/site.js` to customize your application's appearance:
@@ -276,6 +295,10 @@ npm run dev
 ```
 
 Visit the application at: **[http://localhost:3000](http://localhost:3000)**
+
+### Deploy to Vercel
+
+Import the repository into Vercel and add `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `APP_URL` (your deployed `https://` origin), and `ADMIN_EMAILS` in the project's environment variables. Deploy with the included `vercel.json`; the Express application runs as a Vercel function. Add `https://your-domain/auth/callback` and `https://your-domain/reset-password` to Supabase's allowed redirect URLs, then use the Supabase callback URL in your GitHub OAuth App.
 
 ---
 
@@ -313,14 +336,18 @@ Visit the application at: **[http://localhost:3000](http://localhost:3000)**
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :---: |
-| `GET` | `/` | Trang chủ / Giao diện Đăng nhập & Đăng ký | No |
-| `GET` | `/dashboard` | Trang quản trị người dùng sau khi đăng nhập | Yes |
-| `POST` | `/api/auth/login` | Xác thực người dùng & cấp cookie JWT | No |
-| `POST` | `/api/auth/register` | Đăng ký tài khoản người dùng mới | No |
-| `POST` | `/api/auth/forgot` | Gửi email liên kết khôi phục mật khẩu | No |
-| `GET` | `/api/auth/logout` | Xoá session cookie & đăng xuất | No |
-| `GET` | `/reset-password` | Trang reset mật khẩu | No |
-| `POST` | `/api/auth/reset-password` | Reset mật khẩu | No |
+| `GET` | `/` | Sign-in and registration page | No |
+| `GET` | `/api/auth/github` | Start GitHub OAuth sign-in | No |
+| `GET` | `/auth/callback` | Complete GitHub sign-in | No |
+| `GET` | `/dashboard` | Signed-in user's dashboard | Yes |
+| `GET` | `/admin` | Admin page (requires an allowlisted email) | Admin |
+| `POST` | `/api/auth/login` | Authenticate with email and password | No |
+| `POST` | `/api/auth/register` | Create an account | No |
+| `POST` | `/api/auth/forgot` | Send a password-reset email | No |
+| `POST` | `/api/auth/update-password` | Update the account password | No |
+| `POST` | `/api/auth/oauth-session` | Verify OAuth token and create session cookie | No |
+| `GET` | `/api/auth/logout` | Clear the session cookie | No |
+| `GET` | `/reset-password` | Password-reset page | No |
 
 ---
 ## Donate me

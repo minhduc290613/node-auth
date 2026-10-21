@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - NodeAuth</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <main class="container py-5">
+        <section class="card shadow-sm p-4 mx-auto rounded-4" style="max-width: 640px;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="badge text-bg-primary mb-2">Administrator</span>
+                    <h1 class="h3 fw-bold mb-0">Admin page</h1>
+                </div>
+                <i class="fa-solid fa-shield-halved fs-2 text-primary" aria-hidden="true"></i>
+            </div>
+            <p class="text-muted">You are signed in with an administrator account.</p>
+            <div class="bg-light p-3 rounded mb-4 border">
+                <small><strong>Name:</strong> <%= user.user_metadata?.full_name || 'Not provided' %></small><br>
+                <small><strong>Email:</strong> <%= user.email %></small><br>
+                <small><strong>User ID:</strong> <%= user.id %></small>
+            </div>
+            <a href="/dashboard" class="btn btn-outline-primary w-100 mb-3">Back to dashboard</a>
+            <a href="/api/auth/logout" class="btn btn-danger w-100 fw-bold">Sign Out</a>
+        </section>
+    </main>
+</body>
+</html>

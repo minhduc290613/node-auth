@@ -19,6 +19,6 @@ export async function handleFormSubmit(url, bodyData, successCallback) {
     }
   } catch (err) {
     toggleLoading(false);
-    showAlert('Lỗi kết nối máy chủ!', 'danger');
+    showAlert('Unable to connect to the server. Please try again.', 'danger');
   }
 }

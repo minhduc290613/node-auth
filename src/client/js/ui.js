@@ -35,8 +35,8 @@ export function switchView(view) {
       tabs?.classList.remove('d-none');
       tabLogin?.classList.add('active');
       tabRegister?.classList.remove('active');
-      if (title) title.textContent = 'Xin Chào!';
-      if (subtitle) subtitle.textContent = 'Vui lòng đăng nhập để tiếp tục';
+      if (title) title.textContent = 'Welcome!';
+      if (subtitle) subtitle.textContent = 'Sign in to continue';
       if (forms.login) {
         forms.login.classList.remove('form-hidden');
         forms.login.classList.add('active-form');
@@ -45,16 +45,16 @@ export function switchView(view) {
       tabs?.classList.remove('d-none');
       tabRegister?.classList.add('active');
       tabLogin?.classList.remove('active');
-      if (title) title.textContent = 'Tạo Tài Khoản';
-      if (subtitle) subtitle.textContent = 'Điền thông tin để bắt đầu trải nghiệm';
+      if (title) title.textContent = 'Create an Account';
+      if (subtitle) subtitle.textContent = 'Enter your details to get started';
       if (forms.register) {
         forms.register.classList.remove('form-hidden');
         forms.register.classList.add('active-form');
       }
     } else if (view === 'forgot') {
       tabs?.classList.add('d-none');
-      if (title) title.textContent = 'Khôi Phục Mật Khẩu';
-      if (subtitle) subtitle.textContent = 'Chúng tôi sẽ gửi liên kết khôi phục tới email của bạn';
+      if (title) title.textContent = 'Reset Your Password';
+      if (subtitle) subtitle.textContent = 'We will email you a password reset link';
       if (forms.forgot) {
         forms.forgot.classList.remove('form-hidden');
         forms.forgot.classList.add('active-form');

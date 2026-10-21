@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +9,16 @@
 <body class="bg-light">
 <div class="container py-5">
     <div class="card shadow-sm p-4 max-w-lg mx-auto rounded-4" style="max-width: 500px;">
-        <h3 class="fw-bold mb-3">Xin chào, <%= user.user_metadata.full_name || user.email %>! 👋</h3>
-        <p class="text-muted">Bạn đã đăng nhập thành công vào hệ thống Express + Supabase.</p>
+        <h3 class="fw-bold mb-3">Welcome, <%= user.user_metadata?.full_name || user.email %>!</h3>
+        <p class="text-muted">You are signed in to the Express + Supabase application.</p>
         <div class="bg-light p-3 rounded mb-4 border">
             <small><strong>User ID:</strong> <%= user.id %></small><br>
             <small><strong>Email:</strong> <%= user.email %></small>
         </div>
-        <a href="/api/auth/logout" class="btn btn-danger w-100 fw-bold">Đăng Xuất</a>
+        <% if (isAdmin) { %>
+        <a href="/admin" class="btn btn-outline-primary w-100 fw-bold mb-3">Admin page</a>
+        <% } %>
+        <a href="/api/auth/logout" class="btn btn-danger w-100 fw-bold">Sign Out</a>
     </div>
 </div>
 </body>
